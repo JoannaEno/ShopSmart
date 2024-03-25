@@ -10,6 +10,10 @@ from core.config import settings
 async def startup_event():
     await prisma.connect()
     
+
+async def shutdown_event():
+    await prisma.disconnect()
+    
 origins = [
     "http://localhost:3000",
     "localhost:3000"
