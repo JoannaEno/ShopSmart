@@ -75,6 +75,6 @@ class JWTBearer(HTTPBearer):
         return isTokenValid
     
     
-    async def get_user_id(token: str = Depends(JWTBearer())) -> Optional[int]:
+async def get_user_id(token: str = Depends(JWTBearer())) -> Optional[int]:
     decoded = decodeJWT(token)
     return decoded.get("userId")
