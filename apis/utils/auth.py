@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
-from typing import Dict
-from fastapi import Request, HTTPException
+from typing import Dict, Optional
+from fastapi import Depends, Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import bcrypt
 import jwt
@@ -73,3 +73,8 @@ class JWTBearer(HTTPBearer):
         if payload:
             isTokenValid = True
         return isTokenValid
+    
+    
+    async def get_user_id(token: str = Depends(JWTBearer())) -> Optional[int]:
+    decoded = decodeJWT(token)
+    return decoded.get("userId")

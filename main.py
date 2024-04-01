@@ -1,5 +1,4 @@
 import asyncio
-from functools import lru_cache
 from apis.prisma import prisma
 from apis.routes import router as apis
 from fastapi import Depends, FastAPI
