@@ -18,7 +18,7 @@ model User {
   name      String
   password  String
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  updatedAt DateTime  @updatedAt @default(now())
   credit    Int       @default(0)
   order     Order[]
   @@index([id])
@@ -30,7 +30,7 @@ model Product {
   description String
   price       Float
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime @updatedAt @default(now())
   deletedAt   DateTime?
   order       Order[]
   @@index([name])
@@ -44,10 +44,9 @@ model Order {
   product   Product  @relation(fields: [productId], references: [id])
   quantity  Int
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime?
-  
+  updatedAt DateTime @updatedAt @default(now())
+  deletedAt DateTime @default(now())
+
   @@index([userId])
-  @@index([productId])
-  @@index([userId, productId])
+  @@index([id, userId])
 }

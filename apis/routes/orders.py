@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+import math
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from prisma.models import Product
 
@@ -41,8 +43,18 @@ async def read_order(orderId: str, user_id: str = Depends(get_user_id)):
 
 
 @router.get("/orders", tags=["order"], status_code=status.HTTP_200_OK)
-async def read_orders(user_id: str = Depends(get_user_id)):
-    products = await prisma.order.find_many(where={"userId": user_id}, include={"product": True})
+async def read_orders(user_id: str = Depends(get_user_id), page: int = Query(default=1, ge=1),
+                      per_page: int = Query(default=10, le=100)):
+    offset = (page - 1) * per_page
+    orders_count = await prisma.order.count(where={"userId": user_id})
+    total_pages = math.ceil(orders_count / per_page)
+
+    # If the provided page number is greater than the total number of pages, we redirect to the last page
+    if page > total_pages and total_pages > 0:
+        return RedirectResponse(f"/orders?page={total_pages}")
+
+    orders = await prisma.order.find_many(where={"userId": user_id}, include={"product": True}, skip=offset, take=per_page)
+    
     # TODO: Add pagination to this endpoint
 
-    return products
+    return {"total_orders": orders_count, "orders": orders}

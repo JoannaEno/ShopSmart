@@ -1,5 +1,7 @@
+import math
 from typing import Optional
-from fastapi import APIRouter, status
+from fastapi import APIRouter, Query, status
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from prisma.models import User as UserModel
 
@@ -40,10 +42,18 @@ async def read_product(productId: str):
 
 
 @router.get("/products", tags=["product"], status_code=status.HTTP_200_OK)
-async def read_products():
-    products = await prisma.product.find_many()
+async def read_products(page: int = Query(default=1, ge=1),
+                        per_page: int = Query(default=10, le=100)):
+    offset = (page - 1) * per_page
+    products_count = await prisma.order.count(distinct="product")
+    total_pages = math.ceil(products_count / per_page)
 
-    return products
+    # If the provided page number is greater than the total number of pages, we redirect to the last page
+    if page > total_pages and total_pages > 0:
+        return RedirectResponse(f"/orders?page={total_pages}")
+
+    products = await prisma.product.find_many(skip=offset, take=per_page)
+    return {"total_products": products_count, "products": products}
 
 
 @router.delete("/product/{productId}", tags=["product"], status_code=status.HTTP_200_OK)
