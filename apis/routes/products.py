@@ -13,7 +13,7 @@ class Product(BaseModel):
   description: Optional[str] = None
   price: float
   
-  class UpdateProduct(BaseModel):
+class UpdateProduct(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     price: Optional[float] = None
