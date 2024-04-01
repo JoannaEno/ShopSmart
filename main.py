@@ -12,7 +12,7 @@ async def startup_event():
     
 
 async def shutdown_event():
-    await prisma.disconnect()
+   await prisma.disconnect()
     
 origins = [
     "http://localhost:3000",

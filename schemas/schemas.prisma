@@ -13,10 +13,41 @@ generator client {
 
 // data models
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String    @id @default(uuid())
+  email     String    @unique
   name      String
   password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  credit    Int       @default(0)
+  order     Order[]
+  @@index([id])
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+  order       Order[]
+  @@index([name])
+}
+
+model Order {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
   createdAt DateTime @default(now())
-  credit    Int      @default(0)
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+  
+  @@index([userId])
+  @@index([productId])
+  @@index([userId, productId])
 }
