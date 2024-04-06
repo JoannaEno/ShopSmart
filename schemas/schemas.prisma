@@ -8,18 +8,18 @@ datasource db {
 generator client {
   provider             = "prisma-client-py"
   recursive_type_depth = 5
-  interface = "asyncio"
+  interface            = "asyncio"
 }
 
 // data models
 model User {
-  id        String    @id @default(uuid())
-  email     String    @unique
+  id        String   @id @default(uuid())
+  email     String   @unique
   name      String
   password  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt @default(now())
-  credit    Int       @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+  credit    Int      @default(0)
   order     Order[]
   @@index([id])
 }
@@ -37,16 +37,18 @@ model Product {
 }
 
 model Order {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  productId String
-  product   Product  @relation(fields: [productId], references: [id])
-  quantity  Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt @default(now())
-  deletedAt DateTime @default(now())
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  quantity   Int
+  totalPrice Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+  deletedAt  DateTime @default(now())
 
   @@index([userId])
   @@index([id, userId])
+  
 }
