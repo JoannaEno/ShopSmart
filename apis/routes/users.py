@@ -23,12 +23,19 @@ async def read_user_me(token=Depends(JWTBearer())):
 
     if "userId" in decoded:
         userId = decoded["userId"]
-        return prisma.user.find_unique(where={"id": userId})
+        return await prisma.user.find_unique(where={"id": userId})
     return None
 
 
 @router.get("/users/{userId}", tags=["users"], status_code=status.HTTP_200_OK)
 async def get_user_by_id(userId: str):
     user = await prisma.user.find_unique(where={"id": userId})
+
+    return user
+
+
+@router.delete("/users/{userId}", tags=["users"], status_code=status.HTTP_200_OK)
+async def delete_user(userId: str):
+    user = await prisma.user.delete(where={"id": userId})
 
     return user

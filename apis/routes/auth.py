@@ -1,5 +1,5 @@
 from datetime import datetime
-from fastapi import APIRouter, status
+from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel
 from prisma.models import User as UserModel
 
@@ -45,6 +45,14 @@ async def sign_in(signIn: SignIn):
 
 @router.post("/auth/sign-up", tags=["auth"], status_code=status.HTTP_201_CREATED)
 async def sign_up(user: SignUp):
+    existing_user = await prisma.user.find_first(
+        where={
+            "email": user.email,
+        }
+    )
+    if existing_user is not None:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="User already exists")
     user = await prisma.user.create(
         {
             "createdAt": datetime.now(),
