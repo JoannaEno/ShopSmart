@@ -25,12 +25,21 @@ def signJWT(user_id: str) -> Dict[str, str]:
 def decodeJWT(token: str) -> dict:
     try:
         decoded = jwt.decode(token, jwtSecret, algorithms=["HS256"])
-        return decoded if decoded["expires"] else None
+        return decoded
     except jwt.ExpiredSignatureError:
-        print("Token expired. Get new one")
-        return None
-    except:
-        return None
+         raise HTTPException(
+            status_code=403, detail="Token expired. Sign in again."
+        )
+    except jwt.InvalidTokenError:
+        raise HTTPException(
+            status_code=403, detail="Invalid token. Please provide a valid token."
+        )
+    except Exception as e:
+        # Catch any other unexpected errors and handle them appropriately
+        print(f"Error decoding token: {e}")
+        raise HTTPException(
+            status_code=403, detail="An unexpected error occurred while decoding the token."
+        )
 
 
 def encryptPassword(password: str) -> str:
@@ -63,9 +72,9 @@ class JWTBearer(HTTPBearer):
             raise HTTPException(
                 status_code=403, detail="Invalid authorization code.")
 
+    
     def verify_jwt(self, jwtToken: str) -> bool:
         isTokenValid: bool = False
-
         try:
             payload = decodeJWT(jwtToken)
         except:
