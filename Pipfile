@@ -10,6 +10,7 @@ alembic = "*"
 psycopg2 = "*"
 uvicorn = "*"
 python-dotenv = "*"
+openai = "*"
 
 [dev-packages]
 

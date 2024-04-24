@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+sqlalchemy 
+pymysql
+pydantic
+prisma
+openai
+bcrypt
+jwt
+pydantic_settings
+assemblyai
