@@ -4,11 +4,13 @@ from fastapi import APIRouter, Query, status
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from prisma.models import User as UserModel
+from openai import OpenAI
 
 from apis.prisma import prisma
 
 router = APIRouter()
 
+client = OpenAI(api_key="sk-proj-X98alvw8LblcQ26u8UDxT3BlbkFJdfhuvHxn3qdVVcRBccTu")
 
 class Product(BaseModel):
   name: str
@@ -76,3 +78,16 @@ async def update_product(productId: str, product: UpdateProduct):
     )
 
     return {"message": f"Product with id {updatedProduct.id} has been updated successfully"}
+
+@router.post("/product/ai-info", tags=["product"], status_code=status.HTTP_201_CREATED)
+async def suggest_product(product: str):
+    completion = client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": "You are a helpful store assistant. Give more information about store products."},
+        {"role": "user", "content": f"Tell me more about: {product} and suggest similar products."}
+    ]
+    )
+
+    print(completion.choices[0].message)
+    return {"message": completion.choices[0].message}
