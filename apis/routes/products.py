@@ -47,7 +47,8 @@ async def read_product(productId: str):
 async def read_products(page: int = Query(default=1, ge=1),
                         per_page: int = Query(default=10, le=100)):
     offset = (page - 1) * per_page
-    products_count = await prisma.order.count(distinct="product")
+    products_count = await prisma.order.count()
+    # products_count = await prisma.order.count(distinct=["product"])
     total_pages = math.ceil(products_count / per_page)
 
     # If the provided page number is greater than the total number of pages, we redirect to the last page
