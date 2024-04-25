@@ -6,6 +6,8 @@ pydantic
 prisma
 openai
 bcrypt
-jwt
+pyJWT
+python-dotenv
 pydantic_settings
 assemblyai
+pytest

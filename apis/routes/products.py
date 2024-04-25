@@ -3,6 +3,8 @@ from typing import Optional
 from fastapi import APIRouter, Query, status
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
+from dotenv import load_dotenv
+from core.config import settings
 from prisma.models import User as UserModel
 from openai import OpenAI
 
@@ -10,7 +12,7 @@ from apis.prisma import prisma
 
 router = APIRouter()
 
-client = OpenAI(api_key="sk-proj-X98alvw8LblcQ26u8UDxT3BlbkFJdfhuvHxn3qdVVcRBccTu")
+client = OpenAI(api_key= settings.ai_integration)
 
 class Product(BaseModel):
   name: str
@@ -27,10 +29,9 @@ class UpdateProduct(BaseModel):
 async def create_product(product: Product):
     product = await prisma.product.create(
         {
-            "price": product.price,
             "name":  product.name,
-            "description": product.description
-
+            "description": product.description,
+            "price": product.price
         }
     )
     return product
