@@ -11,6 +11,7 @@ class GlobalConfig(BaseSettings):
   secret_key: str
   database_url: str
   jwt_secret: str
+  ai_integration: str
 
   class Config:
     env_file = ".env"
